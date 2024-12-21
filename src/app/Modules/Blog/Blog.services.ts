@@ -1,0 +1,124 @@
+
+import mongoose from "mongoose";
+
+import AppError from "../../errors/AppError";
+import { TBlog } from "./Blog.interface";
+import { BlogModel } from "./Blog.model";
+import { JwtPayload } from "jsonwebtoken";
+import { UserModel } from "../User/User.model";
+import QueryBuilder from "../../builder/QueryBuilder";
+import { blogSearchableFields } from "./Blog.constant";
+
+
+
+
+const createBlogIntoDB = async(payload: TBlog, user: JwtPayload) => {
+
+    
+    const email = user.userEmail;
+    
+    const session = await mongoose.startSession();
+    try{
+      
+        session.startTransaction();
+
+        const user = await UserModel.findOne({email});
+
+        if (!user) {
+          throw new AppError(404, 'Invalid credentials', 'email');
+        }
+
+        payload.author = user?._id;
+
+        const newBlog = await BlogModel.create([payload],{session});
+
+        if (!newBlog.length) {
+            throw new AppError(400, 'Bad Request', 'user_not_created');
+        }
+
+        const populatedBlog = await BlogModel.findById(newBlog[0]._id)
+        .populate('author', 'name email') 
+        .session(session);
+
+        if (!populatedBlog) {
+            throw new AppError(404, 'Failed to retrieve created blog', 'populate_error');
+        }
+
+        await session.commitTransaction();
+        await session.endSession();
+
+        return populatedBlog;
+    
+
+    }catch(error: any){
+        await session.abortTransaction();
+        await session.endSession();
+        throw new Error(error);
+    }
+    
+};
+const updateSingleBlogIntoDB = async(id: string, payload: Partial<TBlog>) => {
+
+    if(await BlogModel.isBlogExistsById(id) == null){
+    
+        throw new AppError(400, 'Blog do not exists','not_exists');
+    }
+
+    const result = await BlogModel.findByIdAndUpdate( id , payload, {
+        new: true,
+        runValidators: true,
+      });
+    return result;
+    
+};
+const deleteSingleBlogIntoDB = async(id: string) => {
+
+  
+    if(await BlogModel.isBlogExistsById(id) == null){
+    
+        throw new AppError(400, 'Blog do not exists','not_exists');
+      }
+    
+        const deletedBlog = await BlogModel.findByIdAndUpdate(
+           id ,
+          { isDeleted: true },
+          { new: true },
+        );
+    
+        
+        if (!deletedBlog) {
+          throw new AppError(400, 'Failed to delete blog 1','');
+        }
+    
+       
+    
+};
+const getAllBlogsIntoDB = async(query: Record<string, unknown>) => {
+
+
+    const studentQuery = new QueryBuilder(
+        BlogModel.find()
+          .populate('author'),
+        query,
+      )
+        // .search(blogSearchableFields)
+        // .filter()
+        // .sortBy()
+        .sortOrder()
+        
+      const result = await studentQuery.modelQuery;
+      return result;
+  
+    
+};
+
+
+
+
+export const BlogServices = {
+    createBlogIntoDB,
+    getAllBlogsIntoDB,
+    updateSingleBlogIntoDB,
+    deleteSingleBlogIntoDB
+}
+
