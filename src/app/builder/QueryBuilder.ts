@@ -9,7 +9,6 @@ class QueryBuilder<T> {
     this.query = query;
   }
 
-
   search(searchableFields: string[]) {
     const search = this?.query?.search;
     if (search) {
@@ -26,50 +25,35 @@ class QueryBuilder<T> {
     return this;
   }
 
- 
-
-
-  
-
   sortBy() {
     const querySortBy = this?.query?.sortBy;
-    if (querySortBy){
+    if (querySortBy) {
+      const sort = (querySortBy as string)?.split(',')?.join(' ');
 
-      const sort =(querySortBy as string)?.split(',')?.join(' ');        
-    
-      this.modelQuery = this.modelQuery.sort(sort as string); 
+      this.modelQuery = this.modelQuery.sort(sort as string);
     }
-      
 
     return this;
   }
   sortOrder() {
     const sortField = 'createdAt';
-    const querySortOrder = this?.query?.sortOrder
-    if(querySortOrder){
-      const sortOrder = querySortOrder === 'asc' ? 1 : -1; 
+    const querySortOrder = this?.query?.sortOrder;
+    if (querySortOrder) {
+      const sortOrder = querySortOrder === 'asc' ? 1 : -1;
       this.modelQuery = this.modelQuery.sort({ [sortField]: sortOrder });
     }
-    
+
     return this;
   }
-
 
   filter() {
-    
     const queryObj = this?.query?.filter;
-    if(queryObj){
-      this.modelQuery = this.modelQuery.find({author: queryObj});  
+    if (queryObj) {
+      this.modelQuery = this.modelQuery.find({ author: queryObj });
     }
-                                   
-       
 
     return this;
   }
-
-
-
- 
 }
 
 export default QueryBuilder;

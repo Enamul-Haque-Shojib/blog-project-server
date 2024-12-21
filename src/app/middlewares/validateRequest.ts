@@ -1,6 +1,3 @@
-
-
-
 import { NextFunction, Request, Response } from 'express';
 import { AnyZodObject } from 'zod';
 import catchAsync from '../utils/catchAsync';
@@ -10,7 +7,6 @@ const validateRequest = (schema: AnyZodObject) => {
     await schema.parseAsync({
       body: req.body,
       cookies: req.cookies,
-      
     });
 
     next();
@@ -18,34 +14,6 @@ const validateRequest = (schema: AnyZodObject) => {
 };
 
 export default validateRequest;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // import { NextFunction, Request, Response } from 'express';
 // import { AnyZodObject } from 'zod';
@@ -63,7 +31,7 @@ export default validateRequest;
 //       });
 
 //       next();
-      
+
 //     } catch (err) {
 //       next(err);
 //     }
