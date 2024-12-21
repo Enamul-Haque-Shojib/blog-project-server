@@ -10,7 +10,7 @@ import AppError from "../errors/AppError";
 import config from "../config";
 
 const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
-  //setting default values
+  
   let statusCode = 500;
   let message = 'Something went wrong!';
   let error: TErrorSources = [
@@ -63,7 +63,7 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
     message = err?.message;
     error = [
       {
-        path: '-------------->>>>>>>>>>>',
+        path: '',
         message: err?.message,
       },
     ];

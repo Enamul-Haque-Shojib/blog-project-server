@@ -111,9 +111,10 @@ const getAllBlogsIntoDB = async(query: Record<string, unknown>) => {
         query,
       )
         .search(blogSearchableFields)
-        .filter()
         .sortBy()
         .sortOrder()
+        .filter()
+      
         
       const result = await studentQuery.modelQuery;
       return result;
