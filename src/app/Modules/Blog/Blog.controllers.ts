@@ -11,7 +11,6 @@ const createBlog = catchAsync(async(req, res)=>{
     const user = req.user;
     const result = await BlogServices.createBlogIntoDB(req.body, user);
 
-    console.log(result);
     const {_id, title, content, author} = result;
     
 

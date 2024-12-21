@@ -19,7 +19,7 @@ const registerUserIntoDB = async(payload: TUser) => {
         
 
         if (!newUser.length) {
-            throw new AppError(400, 'Bad Request', 'not_created');
+            throw new AppError(400, 'Bad Request', 'User does not registered');
         }
 
         
@@ -43,12 +43,12 @@ const loginUserIntoDB = async(payload: TUser) => {
     const user = await UserModel.isUserExistsByEmail(payload.email);
 
   if (!user) {
-    throw new AppError(404, 'Invalid credentials', 'email');
+    throw new AppError(404, 'Invalid credentials', 'email does not exist');
   }
 
 
   if (!(await UserModel.isPasswordMatched(payload?.password, user?.password)))
-    throw new AppError(403, 'Invalid credentials', 'password');
+    throw new AppError(403, 'Invalid credentials', 'password is wrong');
 
 
   
@@ -56,7 +56,7 @@ const loginUserIntoDB = async(payload: TUser) => {
   const userIsBlocked = user?.isBlocked;
 
   if (userIsBlocked == true) {
-    throw new AppError(403, 'Forbidden', 'blocked');
+    throw new AppError(403, 'Forbidden', 'User is already blocked');
   }
 
 

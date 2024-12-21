@@ -49,50 +49,18 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
 
   } else if (err instanceof AppError) {
     statusCode = err?.statusCode;
-    message = err.message;
-    if(err.status === 'email'){
+    message = err?.message;
+    
       error = [
         {
           path: '',
-          message: 'Email is not correct, Please try again',
+          message: err?.details,
         },
       ];
-    }
-    else if(err.status === 'password'){
-      error = [
-        {
-          path: '',
-          message: 'Password is not correct, Please try again',
-        },
-      ];
-    }
-    else if(err.status === 'blocked'){
-      error = [
-        {
-          path: '',
-          message: 'User is blocked',
-        },
-      ];
-    }
-    else if(err.status === 'user_not_created'){
-      error = [
-        {
-          path: '',
-          message: 'User is not created, Please try again',
-        },
-      ];
-    }
-    else if(err.status === 'unauthorized'){
-      error = [
-        {
-          path: '',
-          message: 'User is Unauthorized',
-        },
-      ];
-    }
+    
     
   } else if (err instanceof Error) {
-    message = err.message;
+    message = err?.message;
     error = [
       {
         path: '-------------->>>>>>>>>>>',
@@ -116,15 +84,6 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
 
 export default globalErrorHandler;
 
-//pattern
-/*
-success
-message
-errorSources:[
-  path:'',
-  message:''
-]
-stack
-*/
+
 
 

@@ -63,6 +63,11 @@ userSchema.pre('save', async function (next) {
     return await UserModel.findOne({ email }).select('+password');
   };
 
+  userSchema.statics.isUserBlocked = async function (id: string) {
+       const UserIsBlocked = await UserModel.findById(id);
+       return UserIsBlocked?.isBlocked;
+    };
+
   userSchema.statics.isPasswordMatched = async function (
     plainTextPassword,
     hashedPassword,

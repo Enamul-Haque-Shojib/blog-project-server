@@ -14,20 +14,20 @@ const auth = (...requiredRoles: TUserRole[]) => {
 
     const authHeader = req.headers.authorization;
     if (!authHeader) {
-      throw new AppError(401, 'Authorization header is missing','')
+      throw new AppError(401, 'Header is missing','Authorization header (token) is missing')
     }
 
     
     if (!authHeader.startsWith('Bearer ')) {
       
-      throw new AppError(401, 'Invalid authorization header format','')
+      throw new AppError(401, 'Invalid format','Invalid authorization header format (format: Bearer <token>)')
     }
 
   
     const token = authHeader.split(' ')[1];
 
     if (!token) {
-      throw new AppError(401, 'Unauthorized', 'unauthorized');
+      throw new AppError(401, 'Unauthorized', 'User is not authorized');
     }
 
     
@@ -42,7 +42,7 @@ const auth = (...requiredRoles: TUserRole[]) => {
     const user = await UserModel.isUserExistsByEmail(userEmail);
 
     if (!user) {
-      throw new AppError(404, 'Invalid credentials', 'email');
+      throw new AppError(404, 'Invalid credentials', 'email does not exist');
     }
     
 
@@ -51,7 +51,7 @@ const auth = (...requiredRoles: TUserRole[]) => {
     const userIsBlocked = user?.isBlocked;
 
     if (userIsBlocked == true) {
-      throw new AppError(403, 'Forbidden', 'blocked');
+      throw new AppError(403, 'Forbidden', 'User is already');
     }
 
     if (
@@ -61,11 +61,11 @@ const auth = (...requiredRoles: TUserRole[]) => {
         iat as number,
       )
     ) {
-      throw new AppError(401, 'Unauthorized' ,'unauthorized');
+      throw new AppError(401, 'Unauthorized' ,'User is not authorized');
     }
 
     if (requiredRoles && !requiredRoles.includes(role)) {
-      throw new AppError(401,'Unauthorized', 'unauthorized');
+      throw new AppError(401,'Unauthorized', 'User is not authorized');
     }
 
     req.user = decoded as JwtPayload;

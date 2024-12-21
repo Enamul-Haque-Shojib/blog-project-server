@@ -25,7 +25,7 @@ const createBlogIntoDB = async(payload: TBlog, user: JwtPayload) => {
         const user = await UserModel.findOne({email});
 
         if (!user) {
-          throw new AppError(404, 'Invalid credentials', 'email');
+          throw new AppError(404, 'You are Unauthorized',`You are not authorized by your ${email}`);
         }
 
         payload.author = user?._id;
@@ -33,7 +33,7 @@ const createBlogIntoDB = async(payload: TBlog, user: JwtPayload) => {
         const newBlog = await BlogModel.create([payload],{session});
 
         if (!newBlog.length) {
-            throw new AppError(400, 'Bad Request', 'user_not_created');
+            throw new AppError(400, 'Bad Request', 'Blog could not be created');
         }
 
         const populatedBlog = await BlogModel.findById(newBlog[0]._id)
@@ -41,7 +41,7 @@ const createBlogIntoDB = async(payload: TBlog, user: JwtPayload) => {
         .session(session);
 
         if (!populatedBlog) {
-            throw new AppError(404, 'Failed to retrieve created blog', 'populate_error');
+            throw new AppError(404, 'populate_error of author', 'Failed to retrieve created blog');
         }
 
         await session.commitTransaction();
@@ -61,11 +61,11 @@ const updateSingleBlogIntoDB = async(id: string, payload: Partial<TBlog>) => {
 
     if(await BlogModel.isBlogExistsById(id) == null){
     
-        throw new AppError(400, 'Blog do not exists','not_exists');
+      throw new AppError(400, 'Does not exists',`Blog does not exist this ${id}`);
     }
     if(await BlogModel.isBlogDeleted(id)){
     
-        throw new AppError(400, 'Blog is already Deleted','');
+      throw new AppError(400, 'Blog is already Deleted',`Blog does not exists this ${id} because it is already deleted`);
     }
 
     const result = await BlogModel.findByIdAndUpdate( id , payload, {
@@ -80,12 +80,12 @@ const deleteSingleBlogIntoDB = async(id: string) => {
   
     if(await BlogModel.isBlogExistsById(id) == null){
     
-        throw new AppError(400, 'Blog do not exists','not_exists');
+        throw new AppError(400, 'Does not exists',`Blog does not exist this ${id}`);
     }
 
     if(await BlogModel.isBlogDeleted(id)){
     
-      throw new AppError(400, 'Blog is already Deleted','');
+      throw new AppError(400, 'Blog is already Deleted',`Blog does not exists this ${id} because it is already deleted`);
   }
     
         const deletedBlog = await BlogModel.findByIdAndUpdate(
@@ -96,7 +96,7 @@ const deleteSingleBlogIntoDB = async(id: string) => {
     
         
         if (!deletedBlog) {
-          throw new AppError(400, 'Failed to delete blog','');
+          throw new AppError(400, 'Failed to delete','Blog could not be deleted');
         }
     
        

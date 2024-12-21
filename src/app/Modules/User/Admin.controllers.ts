@@ -17,7 +17,7 @@ const blockedUser = catchAsync(async(req, res)=>{
     sendResponse(res, {
         statusCode: 200,
         success: true,
-        message: 'User blocked successfully By Admin',
+        message: 'User blocked successfully',
         data: result
         
       });

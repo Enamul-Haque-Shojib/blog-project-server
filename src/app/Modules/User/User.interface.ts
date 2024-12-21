@@ -17,6 +17,7 @@ export interface UserStaticModel extends Model<TUser> {
     
     isUserExistsById(id: string): Promise<TUser>;
     isUserExistsByEmail(email: string): Promise<TUser>;
+    isUserBlocked(email: string): Promise<boolean>;
     isPasswordMatched(
       plainTextPassword: string,
       hashedPassword: string,
