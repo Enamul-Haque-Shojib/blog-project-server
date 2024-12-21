@@ -15,6 +15,7 @@ router.patch(
     auth(USER_ROLE.admin),
     AdminControllers.blockedUser
 );
+
 router.delete(
     '/blogs/:id',
     auth(USER_ROLE.admin),

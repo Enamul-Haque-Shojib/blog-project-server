@@ -30,14 +30,17 @@ const blogSchema = new Schema<TBlog, BlogStaticModel>({
   });
 
 blogSchema.pre('find' , function(next){
-    // console.log(this, 'pre hook : we will find the data')
     this.find({isDeleted: {$ne: true}})
     next();
   })
 
- blogSchema.statics.isBlogExistsById = async function (id: string) {
-    return await BlogModel.findById(id);
-  };
 
+  blogSchema.statics.isBlogExistsById = async function (id: string) {
+     return await BlogModel.findById(id);
+   };
+  blogSchema.statics.isBlogDeleted = async function (id: string) {
+     const BlogIsDeleted = await BlogModel.findById(id);
+     return BlogIsDeleted?.isDeleted;
+   };
 
 export const BlogModel = model<TBlog, BlogStaticModel>('Blog', blogSchema);

@@ -26,7 +26,6 @@ const auth = (...requiredRoles: TUserRole[]) => {
   
     const token = authHeader.split(' ')[1];
 
-    
     if (!token) {
       throw new AppError(401, 'Unauthorized', 'unauthorized');
     }
@@ -40,9 +39,6 @@ const auth = (...requiredRoles: TUserRole[]) => {
     const { role, userEmail, iat } = decoded;
 
    
-    
-
-    
     const user = await UserModel.isUserExistsByEmail(userEmail);
 
     if (!user) {

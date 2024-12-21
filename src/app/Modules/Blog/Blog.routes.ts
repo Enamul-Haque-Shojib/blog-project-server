@@ -13,17 +13,19 @@ const router = express.Router();
 
 router.post(
     '/',
-    auth(USER_ROLE.admin, USER_ROLE.user),
+    auth(USER_ROLE.user),
     validateRequest(BlogValidationSchema.createBlogValidationSchema),
     BlogControllers.createBlog
 );
 router.patch(
     '/:id',
-    validateRequest(BlogValidationSchema.createBlogValidationSchema),
+    auth(USER_ROLE.user),
+    validateRequest(BlogValidationSchema.updateBlogValidationSchema),
     BlogControllers.updateSingleBlog
 );
 router.delete(
     '/:id',
+    auth(USER_ROLE.user),
     BlogControllers.deleteSingleBlog
 );
 router.get(

@@ -13,5 +13,7 @@ export type TBlog = {
 export interface BlogStaticModel extends Model<TBlog> {
 
     isBlogExistsById(id: string): Promise<TBlog>;
+    isBlogDeleted(id: string): Promise<boolean>;
+
     
   }

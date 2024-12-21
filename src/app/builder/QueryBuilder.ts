@@ -11,7 +11,7 @@ class QueryBuilder<T> {
 
 
 
-  //http://localhost:5000/api/v1/students?searchTerm=jack&email=jack121@example.com
+  
 
 
   search(searchableFields: string[]) {
