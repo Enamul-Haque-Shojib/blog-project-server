@@ -11,7 +11,20 @@ import { TUserRole } from '../Modules/User/User.interface';
 
 const auth = (...requiredRoles: TUserRole[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const token = req.headers.authorization;
+
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      throw new AppError(401, 'Authorization header is missing','')
+    }
+
+    
+    if (!authHeader.startsWith('Bearer ')) {
+      
+      throw new AppError(401, 'Invalid authorization header format','')
+    }
+
+  
+    const token = authHeader.split(' ')[1];
 
     
     if (!token) {
@@ -61,6 +74,8 @@ const auth = (...requiredRoles: TUserRole[]) => {
 
     req.user = decoded as JwtPayload;
     next();
+
+
   });
 };
 
