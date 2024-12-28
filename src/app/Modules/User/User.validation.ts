@@ -14,9 +14,7 @@ const registerUserValidationSchema = z.object({
 
 const loginUserValidationSchema = z.object({
   body: z.object({
-    email: z.string({
-      invalid_type_error: 'invalid email',
-    }),
+    email: z.string().email({ message: 'Invalid email' }),
     password: z.string({
       invalid_type_error: 'Password Invalid',
     }),

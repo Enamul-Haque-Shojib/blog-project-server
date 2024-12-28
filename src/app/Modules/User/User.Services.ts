@@ -32,16 +32,16 @@ const registerUserIntoDB = async (payload: TUser) => {
   try {
     session.startTransaction();
 
-    // Normalize email to lowercase
+  
     payload.email = payload.email.toLowerCase();
 
-    // Check for duplicate email
+    
     const existingUser = await UserModel.findOne({ email: payload.email }).session(session);
     if (existingUser) {
       throw new AppError(400, 'Conflict', 'Email already exists');
     }
 
-    // Create user
+    
     const newUser = await UserModel.create([payload], { session });
     if (!newUser.length) {
       throw new AppError(400, 'Bad Request', 'User was not registered');
