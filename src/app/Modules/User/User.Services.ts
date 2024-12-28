@@ -6,24 +6,58 @@ import config from '../../config';
 import { createToken } from './User.utils';
 
 const registerUserIntoDB = async (payload: TUser) => {
+  // const session = await mongoose.startSession();
+  // try {
+  //   session.startTransaction();
+  //   const newUser = await UserModel.create([payload], { session });
+
+  //   if (!newUser.length) {
+  //     throw new AppError(400, 'Bad Request', 'User does not registered');
+  //   }
+
+  //   await session.commitTransaction();
+  //   await session.endSession();
+
+  //   return newUser[0];
+  // } catch (error: any) {
+  //   await session.abortTransaction();
+  //   await session.endSession();
+  //   throw new Error(error);
+  // }
+
+
+
+
   const session = await mongoose.startSession();
   try {
     session.startTransaction();
-    const newUser = await UserModel.create([payload], { session });
 
+    // Normalize email to lowercase
+    payload.email = payload.email.toLowerCase();
+
+    // Check for duplicate email
+    const existingUser = await UserModel.findOne({ email: payload.email }).session(session);
+    if (existingUser) {
+      throw new AppError(400, 'Conflict', 'Email already exists');
+    }
+
+    // Create user
+    const newUser = await UserModel.create([payload], { session });
     if (!newUser.length) {
-      throw new AppError(400, 'Bad Request', 'User does not registered');
+      throw new AppError(400, 'Bad Request', 'User was not registered');
     }
 
     await session.commitTransaction();
-    await session.endSession();
-
     return newUser[0];
   } catch (error: any) {
     await session.abortTransaction();
+    throw new AppError(error.statusCode || 500, 'Internal Server Error', error.message || 'An error occurred');
+  } finally {
     await session.endSession();
-    throw new Error(error);
   }
+
+
+  
 };
 
 const loginUserIntoDB = async (payload: TUser) => {
