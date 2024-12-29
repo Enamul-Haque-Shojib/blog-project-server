@@ -103,6 +103,7 @@ const deleteSingleBlogIntoDB = async (id: string) => {
   if (!deletedBlog) {
     throw new AppError(400, 'Failed to delete', 'Blog could not be deleted');
   }
+  
 };
 const getAllBlogsIntoDB = async (query: Record<string, unknown>) => {
   const studentQuery = new QueryBuilder(
